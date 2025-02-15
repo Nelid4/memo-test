@@ -63,7 +63,7 @@ canasta_inicial = [0, 0]  #fila y columna inicial, esquina superior izquierda
 cartas_seleccionadas = [] #guarda las cartas seleccionadas
 tiempo_ultimo_descubrimiento = 0 #cuando se descubre la segunda carta, comienza a funcionar
 esperando = False #variable de estado
-tiempo_total = 26 #tiempo en segundos 190 (3 minutos de juego y 10 segundos de pantalla con explicacion)
+tiempo_total = 190 #tiempo en segundos 190 (3 minutos de juego y 10 segundos de pantalla con explicacion)
 tiempo_inicio = pygame.time.get_ticks() #cuenta en milisegundos
 
 # Funciones
@@ -81,11 +81,11 @@ def seleccionar_carta():
     global tiempo_ultimo_descubrimiento, esperando
     fila, col = canasta_inicial#desempaquetado
     
-    if tablero_estado[fila][col] == False and len(cartas_seleccionadas) < 2:
+    if tablero_estado[fila][col] == False and len(cartas_seleccionadas) < 2:#verifo si la carta esta boca abajo y si no se seleccionaron ya 2 cartas
         tablero_estado[fila][col] = True
         cartas_seleccionadas.append((fila, col))
         
-        if len(cartas_seleccionadas) == 2:
+        if len(cartas_seleccionadas) == 2: #si ya se seleccionaron 2 cartas
             esperando = True
             tiempo_ultimo_descubrimiento = pygame.time.get_ticks()
 
@@ -107,8 +107,8 @@ def manejar_seleccion():
             esperando = False
 
 def dibujar_tablero():
-    for fila in range(FILAS_GRILLA):
-        for columna in range(COLUMNAS_GRILLA):
+    for fila in range(FILAS_GRILLA): #recorro todas las filas
+        for columna in range(COLUMNAS_GRILLA): #recorro todas las columnas
             x = (columna * ANCHO_TOTAL_CARTA) + MARGEN
             y = (fila * ANCHO_TOTAL_CARTA) + MARGEN
             
@@ -132,9 +132,9 @@ def mostrar_temporizador(tiempo_restante):
     texto = f"Tiempo: {minutos}:{segundos}"
 
     if minutos == 0 and segundos <= 10:
-        escribir_texto = fuente_texto.render(texto, True, (255, 0, 0))
+        escribir_texto = fuente_texto.render(texto, True, (255, 0, 0)) #texto rojo
     else:
-        escribir_texto = fuente_texto.render(texto, True, (255, 250, 0))
+        escribir_texto = fuente_texto.render(texto, True, (255, 250, 0)) #texto amarillo
 
     posicion_texto = escribir_texto.get_rect(topright=(ANCHO_VENTANA - 10, 300))
     pygame.draw.rect(ventana, (16, 44, 84), posicion_texto)
@@ -161,7 +161,7 @@ def mostrar_pantalla_inicial():
     for i in range(len(lineas_texto)):#imprime linea x linea
         linea = lineas_texto[i]
         texto_chico = fuente_chica.render(linea, True, (255, 255, 255))
-        texto_rect = texto_chico.get_rect(center=(ANCHO_VENTANA // 2, (ALTO_VENTANA // 2 + 50) + i * 30))
+        texto_rect = texto_chico.get_rect(center=(ANCHO_VENTANA // 2, (ALTO_VENTANA // 2 + 50) + i * 30)) #me aseguro que haya un margen x cada linea
         ventana.blit(texto_chico, texto_rect)
 
     pygame.display.flip()
@@ -198,14 +198,14 @@ while corriendo:
         pantalla_inicial_indicador = False
 
     if muestra_pantalla_final == False:
-        tiempo_transcurrido = (pygame.time.get_ticks() - tiempo_inicio) // 1000
+        tiempo_transcurrido = (pygame.time.get_ticks() - tiempo_inicio) // 1000 #paso el tiempo a segundos
         tiempo_restante = tiempo_total - tiempo_transcurrido
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 corriendo = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w and canasta_inicial[0] > 0:
+                if event.key == pygame.K_w and canasta_inicial[0] > 0: #si la tecla presionada fue la W y la canasta no se encuenta al borde de la grilla
                     canasta_inicial[0] -= 1
                 elif event.key == pygame.K_s and canasta_inicial[0] < 5:
                     canasta_inicial[0] += 1
@@ -224,12 +224,12 @@ while corriendo:
         dibujar_canasta()
         mostrar_temporizador(tiempo_restante)
         
-        if verificar_ganador() == True:
+        if verificar_ganador() == True: #si todas las cartas fueron volteadas
             SONIDO_GANASTE.play()
             mostrar_dino(IMG_DINO_FELIZ)
             mostrar_pantalla_final("¡Lo lograste!")
             muestra_pantalla_final = True
-        elif tiempo_restante == 0:
+        elif tiempo_restante == 0: #si se acabo el tiempo y quedan cartas sin voltear
             SONIDO_PERDISTE.play()
             mostrar_dino(IMG_DINO_TRISTE)
             mostrar_pantalla_final("¡Tiempo agotado! Perdiste.")
@@ -239,7 +239,7 @@ while corriendo:
     else:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_r:
+                if event.key == pygame.K_r: #para volver a jugar
                     pantalla_inicial_indicador = True
                     muestra_pantalla_final = False
                     tiempo_inicio = pygame.time.get_ticks()
@@ -260,7 +260,7 @@ while corriendo:
                         fila_imagenes = imagenes_pares[inicio:fin]
                         tablero_imagenes.append(fila_imagenes)
 
-                elif event.key == pygame.K_q:
+                elif event.key == pygame.K_q: #para salir
                     corriendo = False
 
 pygame.quit()
